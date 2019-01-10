@@ -6,7 +6,7 @@
 // 2017-12-01	v1.1	Team Dracula <cs2521@cse.unsw.edu.au>
 // 2018-12-31	v2.0	Team Dracula <cs2521@cse.unsw.edu.au>
 
-#include <assert.
+#include <assert.h>
 #include <err.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -15,34 +15,25 @@
 #include "game.h"
 #include "game_view.h"
 // #include "map.h" ... if you decide to use the Map ADT
-
+// use enums to specify which character struct to access
 typedef struct characters
 {
-	int G_health;
-	int G_score;
-	char *G_location;
-	int S_health;
-	int S_score;
-	char *S_location;
-	int H_health;
-	int H_score;
-	char *H_location;
-	int M_health;
-	int M_score;
-	char *M_location;
-	int D_health;
-	int D_score;
-	char * D_location;
+	int health;
+	int score;
+	char *location;
 } characters;
 
 typedef characters *Characters;
-
+int main() {
+return 0;
+}
 typedef struct game_view
 {
 	int turn; // current turn, starting at 0
 	int score;
-	char *curr_player;
-	Characters ch;
+	//use enums to determine current player
+	int currPlayer;
+	Characters ch[];
 	
 } game_view;
 
