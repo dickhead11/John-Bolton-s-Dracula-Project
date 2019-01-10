@@ -6,7 +6,7 @@
 // 2017-12-01	v1.1	Team Dracula <cs2521@cse.unsw.edu.au>
 // 2018-12-31	v2.0	Team Dracula <cs2521@cse.unsw.edu.au>
 
-#include <assert.h>
+#include <assert.
 #include <err.h>
 #include <stdbool.h>
 #include <stdlib.h>
