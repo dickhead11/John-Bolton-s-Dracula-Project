@@ -24,9 +24,6 @@ typedef struct characters
 } characters;
 
 typedef characters *Characters;
-int main() {
-return 0;
-}
 typedef struct game_view
 {
 	int turn; // current turn, starting at 0
