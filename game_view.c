@@ -30,7 +30,7 @@ typedef struct game_view
 	int score;
 	//use enums to determine current player
 	int currPlayer;
-	Characters ch[];
+	Characters ch[5];
 	
 } game_view;
 
