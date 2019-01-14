@@ -1,3 +1,4 @@
+
 ////////////////////////////////////////////////////////////////////////
 // COMP2521 19t0 ... the Fury of Dracula
 // game_view.c: GameView ADT implementation
@@ -19,7 +20,6 @@
 typedef struct characters
 {
 	int health;
-	int score;
 	char *location;
 } characters;
 
@@ -95,3 +95,4 @@ location_t *gv_get_connections (
 	*n_locations = 0;
 	return NULL;
 }
+
