@@ -45,54 +45,80 @@ game_view *gv_new (char *past_plays, player_message messages[])
 
 void gv_drop (game_view *gv)
 {
-	/// @todo REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	int i = 0;
+	while (i < 5) {
+		free(gv->ch[i]);
+		i++;
+	}
 	free (gv);
 }
 
 round_t gv_get_round (game_view *gv)
 {
-	/// @todo REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return gv.turn;
 }
 
 enum player gv_get_player (game_view *gv)
 {
-	/// @todo REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return gv.currPlayer;
 }
 
 int gv_get_score (game_view *gv)
 {
-	/// @todo REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return gv.score;
 }
 
 int gv_get_health (game_view *gv, enum player player)
 {
-	/// @todo REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return gv->ch[player].health;
 }
 
 location_t gv_get_location (game_view *gv, enum player player)
 {
-	/// @todo REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return gv->ch[player].location;
 }
-
+//TO DO: needs editing!
 void gv_get_history (
 	game_view *gv, enum player player,
 	location_t trail[TRAIL_SIZE])
 {
-	/// @todo REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	int i = 0;
+	while (i < TRAIL_SIZE) {//generate move data in gameview
+		if (MOVE_NOT_PLAYED) {
+			trail[i] = -1;
+		}
+		else {	
+			trail[i] = MOVE;
+		}
+		i++;
+	}
 }
-
+//TO DO: needs editing!
 location_t *gv_get_connections (
 	game_view *gv, size_t *n_locations,
 	location_t from, enum player player, round_t round,
 	bool road, bool rail, bool sea)
 {
-	/// @todo REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*n_locations = 0;
-	return NULL;
+	location_t arr[&n_locations];
+	if (player == PLAYER_DRACULA) {
+		if (road == true) {
+			// find all road connections for dracula and add to arr[]
+		}
+		if (sea == true) {
+			// find all sea connections for dracula and add to arr[]
+		}
+		return arr;
+	}
+	if (road == true) {
+		// find all road connections for player and add to arr[]
+	}
+	if (sea == true) {
+		// find all sea connections for player and add to arr[]
+	}
+	if (rail == true) {
+		// find all rail connections for player and add to arr[]
+	}
+	return arr;
 }
+
 
