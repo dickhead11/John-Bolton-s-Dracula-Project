@@ -20,7 +20,7 @@
 typedef struct characters
 {
 	int health;
-	char *location;
+	location_t location;
 } characters;
 
 typedef characters *Characters;
