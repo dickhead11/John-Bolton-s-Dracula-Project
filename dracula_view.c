@@ -41,10 +41,10 @@ dracula_view *dv_new (char *past_plays, player_message messages[])
 
 void dv_drop (dracula_view *dv)
 {
-	int i = 0;
+	int playerCount = 0;
 	while (i < 5) {
-		free(dv->ch[i]);
-		i++;
+		free(dv->ch[playerCount]);
+		playerCount++;
 	}
 	free (dv);
 }
@@ -94,15 +94,15 @@ void dv_get_trail (
 	dracula_view *dv, enum player player,
 	location_t trail[TRAIL_SIZE])
 {
-	int i = 0;
-	while (i < TRAIL_SIZE) {//generate move data in dracview
+	int moveCount = 0;
+	while (moveCount < TRAIL_SIZE) {//generate move data in dracview
 		if (MOVE_NOT_PLAYED) {
-			trail[i] = -1;
+			trail[moveCount] = -1;
 		}
 		else {	
-			trail[i] = MOVE;
+			trail[moveCount] = MOVE;
 		}
-		i++;
+		moveCount++;
 	}
 }
 
