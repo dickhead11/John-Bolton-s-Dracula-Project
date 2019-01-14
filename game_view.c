@@ -45,10 +45,10 @@ game_view *gv_new (char *past_plays, player_message messages[])
 
 void gv_drop (game_view *gv)
 {
-	int i = 0;
+	int player = 0;
 	while (i < 5) {
-		free(gv->ch[i]);
-		i++;
+		free(gv->ch[player]);
+		player++;
 	}
 	free (gv);
 }
@@ -82,15 +82,15 @@ void gv_get_history (
 	game_view *gv, enum player player,
 	location_t trail[TRAIL_SIZE])
 {
-	int i = 0;
+	int moveCount = 0;
 	while (i < TRAIL_SIZE) {//generate move data in gameview
 		if (MOVE_NOT_PLAYED) {
-			trail[i] = -1;
+			trail[moveCount] = -1;
 		}
 		else {	
-			trail[i] = MOVE;
+			trail[moveCount] = MOVE;
 		}
-		i++;
+		moveCount++;
 	}
 }
 //TO DO: needs editing!
