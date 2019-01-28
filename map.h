@@ -2,8 +2,7 @@
 // COMP2521 19t0 ... the Fury of Dracula
 // map.h: an interface to a Map data type
 //
-// 2017-11-30   v1.0    Team Dracula <cs2521@cse.unsw.edu.au>
-// 2018-12-31   v2.0    Team Dracula <cs2521@cse.unsw.edu.au>
+// Code by TheGroup, COMP1927 14s2.
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -20,7 +19,6 @@ typedef struct edge {
 
 // graph representation is hidden
 typedef struct map *Map;
-typedef struct map_adj *Adj;
 
 /** Create a new Map. */
 Map map_new (void);
@@ -33,11 +31,10 @@ size_t map_nv (Map);
 /** Get the number of edges. */
 size_t map_ne (Map, transport_t);
 
-// A function finding all reachable destinations for a player
-location_t *find_adj (Map g, location_t location, int railpts, int drac,
-        bool road, bool rail, bool sea);
-
-// A recursive function to count all cities reachable by rail
-void how_many_railpts (int railpts, Map g, Adj curr, location_t *adjacent);
+location_t *reachable_locations (
+	Map map, size_t *n_locations, location_t from,
+	bool drac, int rail_length, bool road, bool sea);
+	
+const char *fastest_way (location_t *array, int n, location_t from, location_t dest);
 
 #endif // !defined(FOD__MAP_H_)

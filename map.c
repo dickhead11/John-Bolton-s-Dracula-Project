@@ -1,10 +1,8 @@
 ////////////////////////////////////////////////////////////////////////
 // COMP2521 19t0 ... the Fury of Dracula
 // map.c: an implementation of a Map type
-// You can change this as much as you want!
 //
-// 2017-11-30	v1.0	Team Dracula <cs2521@cse.unsw.edu.au>
-// 2018-12-31	v2.0	Team Dracula <cs2521@cse.unsw.edu.au>
+// Code by TheGroup, COMP1927 14s2
 
 #include <assert.h>
 #include <err.h>
@@ -33,6 +31,12 @@ static inline bool is_sentinel_edge (connection);
 
 static map_adj *adjlist_insert (map_adj *, location_t, transport_t);
 static bool adjlist_contains (map_adj *, location_t, transport_t);
+
+static void include_reachable_by_rail (
+	Map map, bool reachable[NUM_MAP_LOCATIONS], location_t from, int rail_len);
+	
+static int memb (location_t elem, location_t *array, int size);
+static int sea_connections (map *, location_t);
 
 // Create a new empty graph (for a map)
 // #Vertices always same as NUM_PLACES
@@ -173,60 +177,156 @@ static bool adjlist_contains (map_adj *list, location_t v, transport_t type)
 	return false;
 }
 
-location_t *find_adj (Map g, location_t location, int railpts, int drac,
-        bool road, bool rail, bool sea)
+////////////////////////////////////////////////////////////////////////
+
+location_t *reachable_locations (
+	Map map, size_t *num_locations, location_t from,
+	bool drac, int rail_len, bool road, bool sea)
 {
-	location_t *adjacent = malloc (2 * sizeof (location_t));
-	adjacent[0] = location; // Where hunter is currently
-	adjacent[1] = CITY_UNKNOWN; // Acts like a '\0' for convenience
-	
-	if (!valid_location_p (location)) return adjacent;
-	
-	for (map_adj *curr = g->connections[location]; curr != NULL; curr = curr->next)
-                {
-			if (drac && curr->v == ST_JOSEPH_AND_ST_MARYS) continue; // Dracula is a heathen
+    //a boolean for each location, if it is reachable
+	bool reachable[NUM_MAP_LOCATIONS] = { false };
 
-			size_t i = 0;
-			for (; adjacent[i] != CITY_UNKNOWN; i++); // Find length of adjacent
-                        i++;
+	//setting the 'from' location as reachable
+	reachable[from] = 1;
 
-			if (((curr->type == ROAD || curr->type == ANY ) && road) || ((curr->type == RAIL || curr->type == ANY) && rail && railpts && !drac)
-					|| ((curr->type == BOAT || curr->type == ANY) && sea)) // Add connection only if bool true
-                        {
-				adjacent = realloc (adjacent, (i + 1) * sizeof (location_t));
-				location_t temp = adjacent[i - 1];
-				adjacent[i - 1] = curr->v;
-				adjacent[i] = temp; // Retaining our pseudo '\0'
-			}
+    //for each connection that is by ROAD or SEA,
+	//set it to reachable if road or sea is set to true
+	for (map_adj *curr = map->connections[from];
+		 curr != NULL; curr = curr->next)
+		if ((curr->type == ROAD && road) ||
+			(curr->type == BOAT && sea))
+			reachable[curr->v] = 1;
 
-			if ((curr->type == RAIL || curr->type == ANY) && rail && railpts && !drac) // Reachable by train
-				how_many_railpts (railpts - 1, g, curr, adjacent); 
-                }
+	//include the places reachable by rail
+	include_reachable_by_rail (map, reachable, from, rail_len);
 
-	return adjacent;
+	//going through and putting every reachable location into an array
+	location_t *locations = malloc (NUM_MAP_LOCATIONS * sizeof (location_t));
+	size_t index = 0;
+	for (location_t loc = MIN_MAP_LOCATION; loc <= MAX_MAP_LOCATION; loc++)
+		if (reachable[loc])
+			//don't allow dracula to go to the hospital
+			if (! (drac && loc == ST_JOSEPH_AND_ST_MARYS))
+				locations[index++] = loc;
+
+	//setting the number of locations actually returned
+	*num_locations = index;
+
+	return locations;
 }
 
-void how_many_railpts (int railpts, Map g, map_adj *curr, location_t *adjacent)
+static void include_reachable_by_rail (
+	Map map, bool reachable[NUM_MAP_LOCATIONS],
+	location_t from, int rail_len)
 {
-	if (!railpts) return; // Reached end of max rail conn's
-	for (; curr != NULL; curr = curr->next)
-	{
-		size_t j;
-		for (j = 0; adjacent[j] != CITY_UNKNOWN; j++)
-			if (adjacent[j] == curr->v) break; // Don't double count*
-		
-		if (adjacent[j] == CITY_UNKNOWN) continue; // *
+	assert(rail_len >= 0);
 
-		j++; // For adjacent's length
-		if (curr->type == RAIL || curr->type == ANY)
-		{
-			adjacent = realloc (adjacent, (j + 1) * sizeof (location_t));
-			location_t temp = adjacent[j - 1];
-			adjacent[j - 1] = curr->v; 
-			adjacent[j] = temp;
-			
-			how_many_railpts (railpts - 1, g, curr, adjacent);
-		}
-	}
-	return;
+	reachable[from] = 1;
+
+	if (rail_len <= 0) return;
+
+	for (map_adj *curr = map->connections[from];
+		 curr != NULL; curr = curr->next)
+		if (curr->type == RAIL)
+			include_reachable_by_rail (map, reachable, curr->v, rail_len - 1);
+}
+
+// Does BFS to find shortest path from a to b
+const char *fastest_way (location_t *array, int n, location_t from, location_t dest)
+{
+    if (from == dest) return location_get_abbrev (from);
+    
+    Map g = map_new ();
+    location_t pre[NUM_MAP_LOCATIONS];
+    int dist[NUM_MAP_LOCATIONS];
+    for (int i = 0; i < NUM_MAP_LOCATIONS; i++) { pre[i] = -1; dist[i] = -1; }
+    
+    location_t curr = from; dist[curr] = 0; pre[curr] = -2;
+    while (1)
+    {
+        if (curr == from)
+        {
+            int m;
+            for (m = 0; m < n; m++)
+            {
+                if (dist[array[m]] == -1) dist[array[m]] = dist[curr] + 1;
+                if ((dest == SEA_UNKNOWN && sea_connections (g, array[m])) || // Target ports
+                    array[m] == dest)
+                {
+                    pre[array[m]] = curr;
+                    break;
+                }
+            }
+            if (m != n)
+            {
+                int j;
+                for (j = array[m]; pre[j] != from; j = pre[j]);
+                map_drop (g);
+                return location_get_abbrev (j);// First connection
+            }
+        }
+        else
+        {
+            map_adj *close;
+            for (close = g->connections[curr]; close != NULL; close = close->next)
+            {
+                if (dist[close->v] == -1) dist[close->v] = dist[curr] + 1;
+                if ((dest == SEA_UNKNOWN && sea_connections (g, close->v)) || // Target ports
+                    close->v == dest)
+                {
+                    pre[close->v] = curr;
+                    break;
+                }
+            }
+            
+            if (close != NULL)
+            {
+                int j;
+                for (j = close->v; pre[j] != from; j = pre[j]);
+                map_drop (g);
+                return location_get_abbrev (j);// First connection
+            }
+        }
+        
+        // closest is arbitrarily big
+        int closest = NUM_MAP_LOCATIONS * NUM_MAP_LOCATIONS, cl_index = -1;
+        for (int i = 0; i < NUM_MAP_LOCATIONS; i++)
+            if (dist[i] != -1  && dist[i] < closest && pre[i] == -1)
+            {
+                closest = dist[i];
+                cl_index = i;
+            }
+            
+        if (cl_index == -1) // Should never get here
+        {
+            map_drop (g);
+            return location_get_abbrev (-1);//(g->connections[from]->next->v);
+        }
+        
+        for (map_adj *k = g->connections[cl_index]; k != NULL; k = k->next)
+        {
+            if (dist[k->v] == dist[cl_index] && memb (k->v, array, n)) pre[cl_index] = from;
+            if (dist[k->v] == dist[cl_index] - 1) pre[cl_index] = k->v;
+        }
+        
+        curr = cl_index;
+    }
+}
+
+// Determines if element member of array
+static int memb (location_t elem, location_t *array, int size)
+{
+    for (int i = 0; i < size; i++)
+        if (elem == array[i]) return 1;
+        
+    return 0;
+}
+
+// Determines if a locations is a port
+static int sea_connections (map *g, location_t v)
+{
+    for (map_adj *curr = g->connections[v]; curr != NULL; curr = curr->next)
+        if (curr->type == BOAT) return 1;
+        
+    return 0;
 }
