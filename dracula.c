@@ -9,6 +9,7 @@
 #include "dracula.h"
 #include "dracula_view.h"
 #include "game.h"
+#include <string.h>
 
 void decide_dracula_move (DraculaView dv)
 {	
