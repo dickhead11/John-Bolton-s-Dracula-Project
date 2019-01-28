@@ -35,6 +35,6 @@ location_t *reachable_locations (
 	Map map, size_t *n_locations, location_t from,
 	bool drac, int rail_length, bool road, bool sea);
 	
-const char *fastest_way (location_t *array, int n, location_t from, location_t dest);
+const char *fastest_way (location_t *array, size_t n, location_t from, location_t dest);
 
 #endif // !defined(FOD__MAP_H_)

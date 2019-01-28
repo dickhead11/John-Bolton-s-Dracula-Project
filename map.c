@@ -232,7 +232,7 @@ static void include_reachable_by_rail (
 }
 
 // Does BFS to find shortest path from a to b
-const char *fastest_way (location_t *array, int n, location_t from, location_t dest)
+const char *fastest_way (location_t *array, size_t n, location_t from, location_t dest)
 {
     if (from == dest) return location_get_abbrev (from);
     
