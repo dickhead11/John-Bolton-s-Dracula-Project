@@ -21,8 +21,8 @@ void decide_dracula_move (DraculaView dv)
 
 	for (int i = 0, i < 4, i++) {
 		location_t g = dv_get_location(dv, i);
-		if (strcmp(location_get_abbrev (g), "KL") == 0) || 
-			strcmp(location_get_abbrev (g), "GA") == 0) {
+		if ((strcmp(location_get_abbrev (g), "KL") == 0) || 
+			strcmp(location_get_abbrev (g), "GA") == 0)) {
 			break;
 			if (dv_get_health(dv, 4) <= 16 && i == 3) { 
 				register_best_play ("CD", "coup averted");
