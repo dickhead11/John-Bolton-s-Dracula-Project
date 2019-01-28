@@ -30,7 +30,7 @@ void decide_dracula_move (DraculaView dv)
 			}
 		}
 	}
-	location_t *gay = dv_get_dests(dv, num_Locations, true, true);
+	location_t *gay = dv_get_dests(dv, num_locations, true, true);
 	const char *meh = location_get_abbrev (&gay[0]);
 	register_best_play (meh, "tricked");
 }
