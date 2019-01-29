@@ -13,11 +13,9 @@
 
 void decide_dracula_move (DraculaView dv)
 {	
-	size_t *num_locations;
-	location_t *yo = reachable_locations (
-	connections, num_locations, location_t from,
-	false, 0, true, true);
-	numLocations = strlen(yo);
+	size_t num_locations = 0;
+	location_t *yo = dv_get_dests(
+	dv, &numLocations, true, true);
 
 	for (int i = 0, i < 4, i++) {
 		location_t g = dv_get_location(dv, i);
@@ -31,6 +29,6 @@ void decide_dracula_move (DraculaView dv)
 		}
 	}
 	location_t *gay = dv_get_dests(dv, num_locations, true, true);
-	const char *meh = location_get_abbrev (&gay[0]);
+	const char *meh = location_get_abbrev (gay[0]);
 	register_best_play (meh, "tricked");
 }
