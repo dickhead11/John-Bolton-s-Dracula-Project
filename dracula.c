@@ -36,12 +36,12 @@ void decide_dracula_move (DraculaView dv)
 		location_t *hunterLocations = reachable_locations 
 			(connections, &num_locations, g, false, z, true, true);
 		int numPotentialLoc = strlen(hunterLocations);
-		for (int h = 0, j; h <= numPotentialLoc; j++, h++) {
+		for (int h = 0, j; h < numPotentialLoc; j++, h++) {
 			strcpy(reachableLocHunter[j], hunterLocations[h]);
 		}
 	}
 	// code that moves dracula to the first location that is unreachable to the hunters
-	// if no unreachable location, flies to the castle
+	// if no unreachable location, flies to the castle if castle is not surrounded
 	yo = dv_get_dests(dv, &num_Locations, true, true);
 	for (int i = 0; i < numLocations; i++); {
 		for (int z = 0; z < strlen(reachableLocHunter), z++) {
@@ -51,15 +51,21 @@ void decide_dracula_move (DraculaView dv)
 				return;
 			}
 		}
-		if ((i == numLocations - 1) && (strcmp(location_get_abbrev (g), "KL") != 0) && 
-			strcmp(location_get_abbrev (g), "GA")) != 0)) {
-			register_best_play ("CD", "coup averted");
-			return;
-		}
+		if ((i == numLocations - 1) {
+			for (int i = 0; i < 4; i++) {
+				location_t g = dv_get_location(dv, i);
+				if ((strcmp(location_get_abbrev (g), "KL") == 0) || 
+				strcmp(location_get_abbrev (g), "GA") == 0)) {
+				break;
+				if (i == 3) { 
+					register_best_play ("CD", "coup averted");
+					return;
+				}
+			}
 		// we are surrounded, but hunters are camping outside castle dracula 
 		// and we still have plenty of blood points, so just make a normal move
-		else if (i == numLocations - 1) 
 			register_best_play (location_get_abbrev (yo[0]), "too rich to be caught");
+		}
 	}
 	// random move
 	/*location_t *gay = dv_get_dests(dv, num_locations, true, true);
