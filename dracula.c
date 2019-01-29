@@ -12,7 +12,7 @@
 #include <string.h>
 void decide_dracula_move (DraculaView dv)
 {	
-	size_t num_locations = 0;
+	size_t numLocations = 0;
 	location_t *yo = dv_get_dests(dv, &numLocations, true, true);
 
 	for (int i = 0; i < 4; i++) {
@@ -34,7 +34,7 @@ void decide_dracula_move (DraculaView dv)
 		location_t g = dv_get_location(dv, i);
 		int z = (i + dv_get_round(DraculaView dv)) % 4;
 		location_t *hunterLocations = reachable_locations 
-			(connections, &num_locations, g, false, z, true, true);
+			(connections, &numLocations, g, false, z, true, true);
 		int numPotentialLoc = strlen(hunterLocations);
 		for (int h = 0, j; h < numPotentialLoc; j++, h++) {
 			strcpy(reachableLocHunter[j], hunterLocations[h]);
@@ -42,7 +42,7 @@ void decide_dracula_move (DraculaView dv)
 	}
 	// code that moves dracula to the first location that is unreachable to the hunters
 	// if no unreachable location, flies to the castle if castle is not surrounded
-	yo = dv_get_dests(dv, &num_Locations, true, true);
+	yo = dv_get_dests(dv, &numLocations, true, true);
 	for (int i = 0; i < numLocations; i++); {
 		for (int z = 0; z < strlen(reachableLocHunter), z++) {
 			if (strcmp(yo[i], reachableLocHunter[z]) == 0) break;
