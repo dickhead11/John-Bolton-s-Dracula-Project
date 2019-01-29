@@ -18,7 +18,7 @@ void decide_dracula_move (DraculaView dv)
 	for (int i = 0; i < 4; i++) {
 		location_t g = dv_get_location(dv, i);
 		if ((strcmp(location_get_abbrev (g), "KL") == 0) || 
-			strcmp(location_get_abbrev (g), "GA") == 0)) {
+			(strcmp(location_get_abbrev (g), "GA") == 0)) {
 			break;
 			if (dv_get_health(dv, 4) <= 16 && i == 3) { 
 				register_best_play ("CD", "coup averted");
@@ -68,7 +68,7 @@ void decide_dracula_move (DraculaView dv)
 		}
 	}
 	// random move
-	/*location_t *gay = dv_get_dests(dv, num_locations, true, true);
+	/*location_t *gay = dv_get_dests(dv, &num_locations, true, true);
 	const char *meh = location_get_abbrev (&gay[0]);
 	register_best_play (meh, "tricked"); */
 }
