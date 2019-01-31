@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 // COMP2521 19t0 ... the Fury of Dracula
 // dracula.c: your "Fury of Dracula" Dracula AI
 //
@@ -19,48 +19,47 @@ void decide_dracula_move (DraculaView dv)
 	size_t numLocations = 0;
 	location_t *yo = dv_get_dests(dv, &numLocations, true, true);
 
-	for (int i = 0; i < 4; i++) {
+	for (enum player i = 0; i < 4; i++) {
 		location_t g = dv_get_location(dv, i);
 		if ((strcmp(location_get_abbrev (g), "KL") == 0) || 
-			(strcmp(location_get_abbrev (g), "GA") == 0)) {
+			(strcmp(location_get_abbrev (g), "GA") == 0))
 			break;
-			if (dv_get_health(dv, 4) <= 16 && i == 3) { 
-				register_best_play ("CD", "coup averted");
-				return;
-			}
+		if (dv_get_health(dv, 4) <= 16 && i == 3) { 
+			register_best_play ("CD", "coup averted");
+			return;
 		}
 	}
 	if (dv_get_health(dv, 4) < 3) register_best_play ("CD", "coup averted");
 	// code that gathers all reachable locations to hunters into a single array
 	location_t reachableLocHunter[100];
 	int j = 0, numPotentialLoc;
-	for (int i = 0; i < 4; i++) {
-		location_t g = dv_get_location(dv, i);
-		int z = (i + dv_get_round(dv)) % 4;
-		location_t *hunterLocations = reachable_locations (map, &numLocations, g, false, z, true, true);
+	for (enum player a = 0; a < 4; a++) {
+		location_t g = dv_get_location(dv, a);
+		unsigned int z = (a + (unsigned int) dv_get_round(dv)) % 4;
+		location_t *hunterLocations = reachable_locations (map, &numLocations, g, false, (int) z, true, true);
 		numPotentialLoc = (int) numLocations;
-		for (int h = 0, j; h < numPotentialLoc; j++, h++) {
+		for (int h = 0; h < numPotentialLoc; j++, h++) {
 			reachableLocHunter[j] = hunterLocations[h];
 		}
 	}
 	// code that moves dracula to the first location that is unreachable to the hunters
 	// if no unreachable location, flies to the castle if castle is not surrounded
 	yo = dv_get_dests(dv, &numLocations, true, true);
-	for (int i = 0; i < numLocations; i++) {
-		for (int z = 0, i; z < numPotentialLoc; z++) {
-			if (yo[i] == reachableLocHunter[z]) break;
+	for (int f = 0; f < (int) numLocations; f++) {
+		for (int z = 0; z < numPotentialLoc; z++) {
+			if (yo[f] == reachableLocHunter[z]) break;
 			if (z == numPotentialLoc - 1) {
-				register_best_play (location_get_abbrev (yo[i]), "too rich to be caught");
+				register_best_play (location_get_abbrev (yo[f]), "too rich to be caught");
 				return;
 			}
 		}
-		if (i == (int) numLocations - 1) {
-			for (int i = 0; i < 4; i++) {
-				location_t g = dv_get_location(dv, i);
+		if (f == (int) numLocations - 1) {
+			for (int u = 0; u < 4; u++) {
+				location_t g = dv_get_location(dv, (enum player) u);
 				if ((strcmp(location_get_abbrev (g), "KL") == 0) || 
 				(strcmp(location_get_abbrev (g), "GA") == 0))
 				break;
-				if (i == 3) { 
+				if (u == 3) { 
 					register_best_play ("CD", "coup averted");
 					return;
 				}
