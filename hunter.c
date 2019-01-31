@@ -85,9 +85,9 @@ static const char *random_move (HunterView hv)
 {
     size_t n = 0;
     location_t *array = hv_get_dests (hv, &n, true, true, true);
-    int choice = (hv_get_score (hv) + hv_get_round (hv) * hv_get_round (hv)
-                + hv_get_player (hv)) % n;
-    if (array[choice] == hv_get_location (hv, hv_get_player (hv)) // Don't choose current position
-        choice = (choice + 1) % n;
+    int choice = (int) (((unsigned int) hv_get_score (hv) + (unsigned int) hv_get_round (hv) * (unsigned int) hv_get_round (hv)
+                + hv_get_player (hv)) % (unsigned int) n);
+    if (array[choice] == hv_get_location (hv, hv_get_player (hv))) // Don't choose current position
+        choice = (choice + 1) % (int) n;
     return location_get_abbrev (array[choice]);
 }
